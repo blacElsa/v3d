@@ -8,11 +8,17 @@
 
 #include <exception>
 
+void ErrorCallback(int code, const char* desc) {
+  V3D_CORE_ERROR("Error in glfw {} ({})", code, desc);
+}
+
 namespace v3d {
-GLFWWindow::GLFWWindow(const v3d::WindowProps &property) {
-  m_data.title = property.title;
+GLFWWindow::GLFWWindow(v3d::WindowProps property) {
+  m_data.title = std::move(property.title);
   m_data.width = property.width;
   m_data.height = property.height;
+
+  glfwSetErrorCallback(ErrorCallback);
 
   if (!glfwInit()) {
     V3D_CORE_CRITICAL("Failed to initialize glfw!");

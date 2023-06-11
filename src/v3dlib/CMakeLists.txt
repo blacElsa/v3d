@@ -1,4 +1,4 @@
-add_library(v3dlib STATIC src/v3dlib.cpp src/GLFWwindow.cpp src/Logger.cpp)
+add_library(v3dlib STATIC src/v3dlib.cpp src/GLFWwindow.cpp src/Logger.cpp src/Event.cpp)
 
 add_library(v3d::v3dlib ALIAS v3dlib)
 

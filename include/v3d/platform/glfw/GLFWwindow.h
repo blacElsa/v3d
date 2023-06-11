@@ -16,7 +16,7 @@ class GLFWWindow : public core::AbstractWindow {
     uint32_t height = 900;
   };
 public:
-  explicit GLFWWindow(const WindowProps& property);
+  explicit GLFWWindow(WindowProps property);
   ~GLFWWindow() override;
 
   void Create() override;

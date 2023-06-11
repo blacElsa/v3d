@@ -28,10 +28,10 @@ private:
 #define V3D_CORE_ERROR(...)       ::v3d::core::Log::GetCoreLogger()->error(__VA_ARGS__)
 #define V3D_CORE_CRITICAL(...)    ::v3d::core::Log::GetCoreLogger()->critical(__VA_ARGS__)
 
-#define APP_CORE_TRACE(...)       ::v3d::core::Log::GetClientLogger()->trace(__VA_ARGS__)
-#define APP_CORE_INFO(...)        ::v3d::core::Log::GetClientLogger()->info(__VA_ARGS__)
-#define APP_CORE_WARN(...)        ::v3d::core::Log::GetClientLogger()->warn(__VA_ARGS__)
-#define APP_CORE_ERROR(...)       ::v3d::core::Log::GetClientLogger()->error(__VA_ARGS__)
-#define APP_CORE_CRITICAL(...)    ::v3d::core::Log::GetClientLogger()->critical(__VA_ARGS__)
+#define V3D_APP_TRACE(...)       ::v3d::core::Log::GetClientLogger()->trace(__VA_ARGS__)
+#define V3D_APP_INFO(...)        ::v3d::core::Log::GetClientLogger()->info(__VA_ARGS__)
+#define V3D_APP_WARN(...)        ::v3d::core::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define V3D_APP_ERROR(...)       ::v3d::core::Log::GetClientLogger()->error(__VA_ARGS__)
+#define V3D_APP_CRITICAL(...)    ::v3d::core::Log::GetClientLogger()->critical(__VA_ARGS__)
 
 #endif //V3D_LOGGER_H
