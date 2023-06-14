@@ -5,8 +5,11 @@
 #ifndef V3D_WINDOW_H
 #define V3D_WINDOW_H
 
+#include <memory>
 #include <string>
 #include <cstddef>
+
+#include <v3d/core/Event.h>
 
 namespace v3d {
 struct WindowProps {
@@ -29,7 +32,9 @@ public:
   virtual void Close() = 0;
   virtual bool IsOpen() = 0;
 
+  virtual void BindEventDispatcher(std::shared_ptr<EventDispatcher>) = 0;
   virtual void PollEvents() = 0;
+
   virtual void SwapBuffers() = 0;
 };
 } // core

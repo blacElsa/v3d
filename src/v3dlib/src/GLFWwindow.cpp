@@ -1,12 +1,13 @@
 //
 // Created by vvin on 6/10/23.
 //
-#include <glad/glad.h>
-
-#include <v3d/core/Logger.h>
-#include <v3d/platform/glfw/GLFWwindow.h>
-
 #include <exception>
+
+#include <glad/glad.h>
+#include <v3d/core/Logger.h>
+#include <v3d/core/EventType.h>
+
+#include <v3d/platform/glfw/GLFWwindow.h>
 
 void ErrorCallback(int code, const char* desc) {
   V3D_CORE_ERROR("Error in glfw {} ({})", code, desc);
@@ -54,6 +55,8 @@ void GLFWWindow::Create() {
     V3D_CORE_CRITICAL("Failed to initialize glad");
     std::terminate();
   }
+
+  SetupCallbacks();
 }
 
 void GLFWWindow::Close() {
@@ -64,8 +67,72 @@ bool GLFWWindow::IsOpen() {
   return !glfwWindowShouldClose(m_window);
 }
 
-void GLFWWindow::PollEvents() { }
+void GLFWWindow::BindEventDispatcher(std::shared_ptr<core::EventDispatcher> event_dispatcher) {
+  m_event_dispatcher = event_dispatcher;
+}
+
+void GLFWWindow::PollEvents() {
+  glfwPollEvents();
+}
 void GLFWWindow::SwapBuffers() {
   glfwSwapBuffers(m_window);
+}
+
+void GLFWWindow::SetupCallbacks() {
+  glfwSetKeyCallback(m_window, [](GLFWwindow* glfw, int key, int scancode, int action, int mods) {
+    auto window = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(glfw));
+    if (auto event_dispatcher = window->m_event_dispatcher.lock()) {
+      event_dispatcher->Dispatch(KeyEvent(key, scancode, action, mods));
+    }
+  });
+
+  glfwSetCursorPosCallback(m_window, [](GLFWwindow* glfw, double xpos, double ypos){
+    auto window = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(glfw));
+    if (auto event_dispatcher = window->m_event_dispatcher.lock()) {
+      event_dispatcher->Dispatch(MouseEvent(xpos, ypos));
+    }
+  });
+
+  glfwSetMouseButtonCallback(m_window, [](GLFWwindow* glfw, int button, int action, int mods) {
+    auto window = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(glfw));
+    if (auto event_dispatcher = window->m_event_dispatcher.lock()) {
+      event_dispatcher->Dispatch(MouseButtonEvent(button, action, mods));
+    }
+  });
+
+  glfwSetScrollCallback(m_window, [](GLFWwindow* glfw, double xoffset, double yoffset) {
+    auto window = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(glfw));
+    if (auto event_dispatcher = window->m_event_dispatcher.lock()) {
+      event_dispatcher->Dispatch(MouseScrollEvent(xoffset, yoffset));
+    }
+  });
+
+  glfwSetWindowSizeCallback(m_window, [](GLFWwindow* glfw, int width, int height) {
+    auto window = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(glfw));
+    if (auto event_dispatcher = window->m_event_dispatcher.lock()) {
+      event_dispatcher->Dispatch(WindowSizeEvent(width, height));
+    }
+  });
+
+  glfwSetFramebufferSizeCallback(m_window, [](GLFWwindow* glfw, int width, int height) {
+    auto window = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(glfw));
+    if (auto event_dispatcher = window->m_event_dispatcher.lock()) {
+      event_dispatcher->Dispatch(FramebufferSizeEvent(width, height));
+    }
+  });
+
+  glfwSetWindowCloseCallback(m_window, [](GLFWwindow* glfw) {
+    auto window = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(glfw));
+    if (auto event_dispatcher = window->m_event_dispatcher.lock()) {
+      event_dispatcher->Dispatch(WindowCloseEvent());
+    }
+  });
+
+  glfwSetWindowFocusCallback(m_window, [](GLFWwindow* glfw, int focus) {
+    auto window = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(glfw));
+    if (auto event_dispatcher = window->m_event_dispatcher.lock()) {
+      event_dispatcher->Dispatch(WindowFocusEvent(focus));
+    }
+  });
 }
 } // v3d
