@@ -15,6 +15,10 @@ class GLFWWindow : public core::AbstractWindow {
     std::string title;
     uint32_t width = 1600;
     uint32_t height = 900;
+
+    WindowData(std::string t_title, uint32_t t_width, uint32_t t_height) :
+        title(std::move(t_title)), width(t_width), height(t_height)
+    { }
   };
 public:
   explicit GLFWWindow(WindowProps property);
@@ -22,8 +26,9 @@ public:
 
   void Create() override;
 
-  void Close() final;
-  bool IsOpen() final;
+  void Close() override;
+  [[nodiscard]]
+  bool IsOpen() const final;
 
   void BindEventDispatcher(std::shared_ptr<core::EventDispatcher>) override;
   void PollEvents() override;

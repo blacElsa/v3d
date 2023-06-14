@@ -28,9 +28,9 @@ int main() {
   dispatcher->Dispatch(TestEvent("Hello", 42));
 
   auto props = v3d::WindowProps("v3d-sandbox");
-  auto window = v3d::GLFWWindow(std::move(props));
-  window.Create();
-  window.BindEventDispatcher(dispatcher);
+  auto window = v3d::MakeWindow<v3d::GLFWWindow>(std::move(props));
+
+  window->BindEventDispatcher(dispatcher);
 
   auto key_handler = std::make_shared<v3d::TypedEventHandler<v3d::KeyEvent>>([](const v3d::KeyEvent& e) {
     std::string action;
@@ -44,7 +44,9 @@ int main() {
       case GLFW_REPEAT:
         action = "Repeat";
         break;
-    };
+      default:
+        return;
+    }
     V3D_APP_TRACE("Key {}: {}", e.key, action);
   });
 
@@ -55,9 +57,9 @@ int main() {
   dispatcher->AddEventHandler<v3d::KeyEvent>(key_handler);
   dispatcher->AddEventHandler<v3d::MouseEvent>(mouse_handler);
 
-  while (window.IsOpen()) {
-    window.PollEvents();
-    window.SwapBuffers();
+  while (window->IsOpen()) {
+    window->PollEvents();
+    window->SwapBuffers();
   }
 
   return 0;
